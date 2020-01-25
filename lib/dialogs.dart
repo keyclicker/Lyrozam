@@ -34,12 +34,11 @@ class ResultsDialog extends StatelessWidget{
     return Center(
       child: Container(
         height: 125,
-        width: 225,
         child: Card(
           elevation: 20,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +50,9 @@ class ResultsDialog extends StatelessWidget{
                 Expanded(
                   flex: 1,
                   child: FlatButton(
-                    child: Text("Ok", style: TextStyle(fontSize: 15)),
+                    child: Container(
+                        child: Text("Ok", style: TextStyle(fontSize: 15))
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
                     },

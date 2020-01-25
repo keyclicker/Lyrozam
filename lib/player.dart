@@ -1,28 +1,40 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lyrozam/api/main.dart';
 import 'package:lyrozam/dialogs.dart';
 import 'package:lyrozam/homepage.dart';
-import 'package:lyrozam/mywidgets.dart';
+
+
 
 class Player extends StatefulWidget {
   static List<SongResponse> songs;
-
   @override
   PlayerState createState() => PlayerState();
 }
 
 class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
-  bool isPlaying = false;
+  AudioPlayer audioPlayer = AudioPlayer();
 
+  bool isPlaying = false;
   static var songNumber = 0;
 
   Color textColor = Color.fromRGBO(219, 210, 70, 1);
   Color backColor = Color.fromRGBO(25, 32, 24, 1);
 
-  var currentSong = Player.songs[songNumber];
+
+  @override
+  void initState(){
+    super.initState();
+
+    var play = () async {
+      int result = await audioPlayer.play(Player.songs[songNumber].trackLink);
+    };
+    play();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +45,7 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
           Positioned(
             top: 90, left: 0, right: 0,
             child: Center(
-              child: Text('Suggestion $songNumber', style: TextStyle(
+              child: Text('Suggestion ${songNumber+1}', style: TextStyle(
                   fontSize: 50,
                   color: Colors.white,
                   fontWeight: FontWeight.w900)),
@@ -79,18 +91,18 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
 
                     children: <Widget>[
                       IconButton(
-                          onPressed: (){
+                          onPressed: () async {
                             Navigator.pop(context);
                             playerScore++;
                             songNumber++;
                             if (songNumber <= 4) {
-                              _nextSong();
+                              popupDialog(context, Player());
                             }
                             else {
                               songNumber = 0;
                               victory();
                             }
-
+                            int result = await audioPlayer.stop();
                           },
                           iconSize: 55,
                           icon: Icon(Icons.close, color: Colors.white)
@@ -99,11 +111,12 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
                         flex: 2,
                       ),
                       IconButton(
-                          onPressed: (){
+                          onPressed: () async{
                             Navigator.pop(context);
                             lysoramScore++;
                             songNumber = 0;
                             defeat();
+                            int result = await audioPlayer.stop();
                           },
                           iconSize: 55,
                           icon: Icon(Icons.check, color: Colors.white)
@@ -133,11 +146,6 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
   void defeat() {
     showResults("Sorry, but you loose(");
   }
-  
-  void _nextSong(){
-    //todo:nextsong
-    popupDialog(context, Player());
-  }
 
   Widget _buildButtons() {
     return Column(
@@ -150,11 +158,11 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              currentSong.artist,
+              Player.songs[songNumber].artist,
               style: TextStyle(fontSize: 15, color: textColor, fontWeight: FontWeight.w800),
             ),
             Text(
-              currentSong.title,
+              Player.songs[songNumber].title,
               style: TextStyle(color: textColor, fontWeight: FontWeight.w400),
             ),
           ],
@@ -167,6 +175,17 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
               iconSize: 30,
               padding: EdgeInsets.all(0),
               icon: Icon(Icons.skip_previous, color: textColor),
+              onPressed: () {
+                setState(() {
+                  if (songNumber > 0) {
+                    songNumber--;
+                        () async {
+                      await audioPlayer.play(Player.songs[songNumber].trackLink);
+                    } ();
+                  }
+                });
+              },
+
             ),
 
             IconButton(
@@ -175,6 +194,12 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
               icon: Icon(isPlaying ? Icons.play_arrow : Icons.pause, color: textColor),
               onPressed: () {
                 setState(() {
+                  () async{
+                    if (isPlaying)
+                      await audioPlayer.resume();
+                    else
+                      await audioPlayer.pause();
+                  } ();
                   isPlaying = !isPlaying;
                 });
               },
@@ -196,7 +221,7 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
         Positioned(
             right: -5,
             child: Image.network(
-              currentSong.pictureLink,
+              Player.songs[songNumber].pictureLink,
               height: 145,
             )
         ),
@@ -226,11 +251,14 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
     return Container(
       width: double.infinity,
       child: SingleChildScrollView(
-        child: Text(
-          currentSong.lyrics,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 17.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Text(
+            Player.songs[songNumber].lyrics,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 17.0),
+          ),
         ),
       ),
     );

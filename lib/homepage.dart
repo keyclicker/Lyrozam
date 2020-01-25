@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 var playerScore = 0;
 var lysoramScore = 0;
 
-String lyrics;
+String lyrics = '';
 
 
 class HomePageState extends State<HomePage> {
@@ -89,11 +89,9 @@ class HomePageState extends State<HomePage> {
                           {
                             isSearchButtonActive = false;
                             Player.songs = await getSong(lyrics);
-                            print(Player.songs);
                             popupDialog(context, Player());
                             isSearchButtonActive = true;
                           }
-
                         }
                     )
                   )
