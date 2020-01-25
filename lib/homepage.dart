@@ -65,7 +65,7 @@ class HomePageState extends State<HomePage> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              padding: EdgeInsets.only(right: 10, left: 30),
+              padding: EdgeInsets.only(right: 7, left: 30),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -85,12 +85,14 @@ class HomePageState extends State<HomePage> {
                     child: IconButton(
                         icon: Icon(Icons.search, color: Colors.black,),
                         onPressed: () async {
-                          if (lyrics.isNotEmpty && isSearchButtonActive)
+                          print(lyrics.isNotEmpty);
+                          print(isSearchButtonActive);
+                          if (lyrics.isNotEmpty)
                           {
-                            isSearchButtonActive = false;
+                            popupDialog(context, Center(child: CircularProgressIndicator()));
                             Player.songs = await getSong(lyrics);
+                            Navigator.pop(context);
                             popupDialog(context, Player());
-                            isSearchButtonActive = true;
                           }
                         }
                     )

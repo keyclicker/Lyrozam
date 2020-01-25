@@ -1,16 +1,10 @@
-# lyrozam
+# Lyrozam
 
-A new Flutter project.
+Lyrozam is an app for finding songs by its lyrics, author or name
 
-## Getting Started
+## Installation
 
-This project is a starting point for a Flutter application.
+To install app you must download Intellij and Flutter.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Then you should download and run our code and compile it for your device

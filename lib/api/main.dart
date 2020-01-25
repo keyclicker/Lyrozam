@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'config.dart';
 import 'dart:math' as math;
 import 'dart:convert' as convert;
@@ -8,13 +10,12 @@ var deezerLink = 'https://api.deezer.com/search?limit=1&output=json&q=';
 
 var client = http.Client();
 
-class SongResponse
-{
+class SongResponse {
   String title;
   String artist;
   String lyrics;
-  String pictureLink = '';
-  String trackLink = '';
+  Uint8List picture;
+  String trackLink;
   bool empty = true;
 }
 
@@ -76,9 +77,14 @@ Future<SongResponse> getInfo(String songArtist, String songTitle) async
     {
       songResponse.title = searchResponse[0]['title'];
       songResponse.artist = searchResponse[0]['artist']['name'];
-      songResponse.pictureLink = searchResponse[0]['album']['cover_medium'];
       songResponse.trackLink = searchResponse[0]['preview'];
       songResponse.empty = false;
+
+      var picReq = await client.get(searchResponse[0]['album']['cover_medium']);
+      if (picReq.statusCode == 200)
+      {
+        songResponse.picture = picReq.bodyBytes;
+      }
     }
   }
 

@@ -28,16 +28,16 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
   @override
   void initState(){
     super.initState();
-
-    var play = () async {
+    () async {
       int result = await audioPlayer.play(Player.songs[songNumber].trackLink);
-    };
-    play();
-
+    } ();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (songNumber > Player.songs.length)
+      victory();
+
     return Material(
       color: Color.fromRGBO(0, 0, 0, 0),
       child: Stack(
@@ -220,10 +220,13 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
       children: <Widget>[
         Positioned(
             right: -5,
-            child: Image.network(
-              Player.songs[songNumber].pictureLink,
+            child: !Player.songs[songNumber].empty ? (Image.memory(
+              Player.songs[songNumber].picture,
               height: 145,
-            )
+            )) : (Image.network(
+                "http://www.bonson.natcom.com.ht/includes/Nexttel/User/Images/music-defult-img.png",
+              height: 145,
+            ))
         ),
         SizedBox ( //TODO: find better solution
           height: double.infinity,

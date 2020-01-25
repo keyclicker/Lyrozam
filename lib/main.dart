@@ -13,8 +13,8 @@ class App extends StatelessWidget {
       return MaterialApp(
         theme: ThemeData(
           brightness: Brightness.light,
-          primaryColor: Colors.redAccent[800],
-          accentColor: Colors.green,
+          primaryColor: Colors.grey,
+          accentColor: Colors.black,
         ),
         home: HomePage()
     );
