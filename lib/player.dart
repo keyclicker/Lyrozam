@@ -2,8 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lyrozam/api/main.dart';
+import 'package:lyrozam/dialogs.dart';
+import 'package:lyrozam/homepage.dart';
+import 'package:lyrozam/mywidgets.dart';
 
 class Player extends StatefulWidget {
+  static List<SongResponse> songs;
+
   @override
   PlayerState createState() => PlayerState();
 }
@@ -11,31 +17,31 @@ class Player extends StatefulWidget {
 class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
   bool isPlaying = false;
 
+  static var songNumber = 0;
+
   Color textColor = Color.fromRGBO(219, 210, 70, 1);
   Color backColor = Color.fromRGBO(25, 32, 24, 1);
+
+  var currentSong = Player.songs[songNumber];
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Color.fromRGBO(0, 0, 0, 0),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 10,
-          sigmaY: 10
-        ),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text('Suggestions', style: TextStyle(
-                    fontSize: 50,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900)),
-              ),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 90, left: 0, right: 0,
+            child: Center(
+              child: Text('Suggestion $songNumber', style: TextStyle(
+                  fontSize: 50,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900)),
             ),
-            Expanded(
-              flex: 4,
+          ),
+          Positioned(
+            top: 180, left: 0, right: 0,
+            child: Center(
               child: SizedBox(
                 width: 350,
                 height: 500,
@@ -59,10 +65,13 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
                 )
                ),
             ),
-            Expanded(
-              flex: 1,
+          ),
+          Positioned(
+            top: 700, left: 0, right: 0,
+
+            child: Center(
               child: Container(
-                width: 200,
+                width: 235,
                 child: Center(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,8 +81,18 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
                       IconButton(
                           onPressed: (){
                             Navigator.pop(context);
+                            playerScore++;
+                            songNumber++;
+                            if (songNumber <= 4) {
+                              _nextSong();
+                            }
+                            else {
+                              songNumber = 0;
+                              victory();
+                            }
+
                           },
-                          iconSize: 50,
+                          iconSize: 55,
                           icon: Icon(Icons.close, color: Colors.white)
                       ),
                       Spacer(
@@ -82,19 +101,42 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
                       IconButton(
                           onPressed: (){
                             Navigator.pop(context);
+                            lysoramScore++;
+                            songNumber = 0;
+                            defeat();
                           },
-                          iconSize: 50,
+                          iconSize: 55,
                           icon: Icon(Icons.check, color: Colors.white)
                       ),
                     ],
                   ),
                 ),
               ),
-            )
-            ]
-        ),
+            ),
+          )
+          ]
       ),
     );
+  }
+
+  void showResults(string) {
+    popupDialog(context, ResultsDialog(
+      text: string,
+      buttonText: "hell",
+    ));
+  }
+
+  void victory() {
+    showResults("Congratulations, you win!");
+  }
+
+  void defeat() {
+    showResults("Sorry, but you loose(");
+  }
+  
+  void _nextSong(){
+    //todo:nextsong
+    popupDialog(context, Player());
   }
 
   Widget _buildButtons() {
@@ -108,11 +150,11 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'The End',
+              currentSong.artist,
               style: TextStyle(fontSize: 15, color: textColor, fontWeight: FontWeight.w800),
             ),
             Text(
-              'The Doors',
+              currentSong.title,
               style: TextStyle(color: textColor, fontWeight: FontWeight.w400),
             ),
           ],
@@ -152,9 +194,9 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
     return Stack(
       children: <Widget>[
         Positioned(
-            right: 0,
-            child: Image.network( // TODO: uploading from database
-              'https://lh5.ggpht.com/32nGIYKdvbjVKTHRCht2J1qL8EX9u2N1ZrnxSBqBl_u_SmtJTQIMMg9zmskeavPMkgBBFhlKLHg=s512-c-e100-rwu-v1',
+            right: -5,
+            child: Image.network(
+              currentSong.pictureLink,
               height: 145,
             )
         ),
@@ -182,7 +224,15 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
 
   Widget _buildLyrics() {
     return Container(
-      color: Colors.white,
+      width: double.infinity,
+      child: SingleChildScrollView(
+        child: Text(
+          currentSong.lyrics,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 17.0),
+        ),
+      ),
     );
   }
 }

@@ -1,12 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
-Widget MyCard({
-  EdgeInsets padding = const EdgeInsets.all(3),
-  Color color = Colors.white,
-  double elevate = 5,
-  Widget child
-})
-{
+Widget MyCard(
+    {EdgeInsets padding = const EdgeInsets.all(3),
+    Color color = Colors.white,
+    double elevate = 5,
+    Widget child}) {
   return Container(
     padding: padding,
     decoration: BoxDecoration(
@@ -18,9 +17,9 @@ Widget MyCard({
             offset: Offset(elevate, elevate),
             blurRadius: elevate * 2,
           )
-        ]
-    ),
-
+        ]),
     child: child,
   );
 }
+
+

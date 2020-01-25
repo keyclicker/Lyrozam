@@ -1,14 +1,32 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math.dart' as math;
-import 'player.dart';
 
-class HomePage extends StatelessWidget {
+import 'dialogs.dart';
+import 'player.dart';
+import 'api/main.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+var playerScore = 0;
+var lysoramScore = 0;
+
+String lyrics;
+
+
+class HomePageState extends State<HomePage> {
+  var isSearchButtonActive = true;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
         body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -16,7 +34,7 @@ class HomePage extends StatelessWidget {
 
               children: <Widget>[
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Center(
                     child: Text('Lyrozam', style: TextStyle(
                         fontSize: 70,
@@ -28,17 +46,9 @@ class HomePage extends StatelessWidget {
                   flex: 0,
                   child: _buildSearch(context),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Card(
-                        elevation: 5,
-                        child: ListTile()
-                    ),
-                  ),
-                )
-
+                  Spacer(
+                    flex: 4,
+                  )
               ],
             )
         )
@@ -48,54 +58,49 @@ class HomePage extends StatelessWidget {
   Widget _buildSearch(context) {
     return Center(
       child: Container(
-          height: 60,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          padding: EdgeInsets.only(right: 10, left: 25),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.25),
-                    blurRadius: 5,
-                    offset: Offset(2,2)
-                )
-              ]
-          ),
-
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: TextField(
-                ),
-              ),
-
-              Expanded(
-                flex: 1,
-                child: IconButton(
-                    icon: Icon(Icons.search, color: Colors.blue,),
-                    onPressed: () => showGeneralDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      pageBuilder: (context, anim1, anim2) {},
-                      barrierColor: Color.fromRGBO(0, 0, 0, 0.25),
-
-                      transitionDuration: Duration(milliseconds: 200),
-                      transitionBuilder: (context, anim1, anim2, child) {
-                        return Transform.scale(
-                          scale: anim1.value,
-                          child: Opacity(
-                            opacity: anim1.value,
-                              child: Player()
-                          )
-                        );
+        height: 60,
+        child: Card(
+            elevation: 5,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              padding: EdgeInsets.only(right: 10, left: 30),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: TextField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter lyrics to start game'
+                      ),
+                      onChanged: (string) {
+                        lyrics = string;
                       },
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: IconButton(
+                        icon: Icon(Icons.search, color: Colors.black,),
+                        onPressed: () async {
+                          if (lyrics.isNotEmpty && isSearchButtonActive)
+                          {
+                            isSearchButtonActive = false;
+                            Player.songs = await getSong(lyrics);
+                            print(Player.songs);
+                            popupDialog(context, Player());
+                            isSearchButtonActive = true;
+                          }
+
+                        }
                     )
-                ),
-              )
-            ],
-          )
+                  )
+                ],
+              ),
+            )
+        ),
       ),
     );
   }
