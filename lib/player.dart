@@ -21,8 +21,8 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
   bool isPlaying = false;
   static var songNumber = 0;
 
-  Color textColor = Color.fromRGBO(219, 210, 70, 1);
-  Color backColor = Color.fromRGBO(25, 32, 24, 1);
+  Color textColor = Color.fromRGBO(126, 31, 29, 1);
+  Color backColor = Color.fromRGBO(248, 248, 248, 1);
 
 
   @override
@@ -207,7 +207,7 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
             IconButton(
               iconSize: 30,
               padding: EdgeInsets.all(0),
-              icon: Icon( Icons.skip_next, color: textColor),
+              icon: Icon( Icons.skip_next, color: Color.fromRGBO(126, 31, 29, 0.5)),
             )
           ],
         ),
