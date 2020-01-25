@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Player extends StatefulWidget {
@@ -13,27 +16,84 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 350,
-        height: 500,
+    return Material(
+      color: Color.fromRGBO(0, 0, 0, 0),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 10,
+          sigmaY: 10
+        ),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Text('Suggestions', style: TextStyle(
+                    fontSize: 50,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900)),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: SizedBox(
+                width: 350,
+                height: 500,
 
-        child: Card(
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-            elevation: 50,
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: _buildPlayer(),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: _buildMusicList(),
+                child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                    elevation: 50,
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: _buildPlayer(),
+                        ),
+                        Expanded(
+                          flex: 5,
+                          child: _buildLyrics(),
+                        )
+                      ],
+                    )
                 )
-              ],
+               ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: 200,
+                child: Center(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+
+                    children: <Widget>[
+                      IconButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          iconSize: 50,
+                          icon: Icon(Icons.close, color: Colors.white)
+                      ),
+                      Spacer(
+                        flex: 2,
+                      ),
+                      IconButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          iconSize: 50,
+                          icon: Icon(Icons.check, color: Colors.white)
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             )
-        )
+            ]
+        ),
+      ),
     );
   }
 
@@ -120,7 +180,7 @@ class PlayerState extends State<Player> with SingleTickerProviderStateMixin{
     );
   }
 
-  Widget _buildMusicList() {
+  Widget _buildLyrics() {
     return Container(
       color: Colors.white,
     );

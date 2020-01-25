@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math.dart' as math;
 import 'player.dart';
 
 class HomePage extends StatelessWidget {
@@ -73,11 +75,22 @@ class HomePage extends StatelessWidget {
                 flex: 1,
                 child: IconButton(
                     icon: Icon(Icons.search, color: Colors.blue,),
-                    onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => Center (
-                            child: Player()
-                        )
+                    onPressed: () => showGeneralDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      pageBuilder: (context, anim1, anim2) {},
+                      barrierColor: Color.fromRGBO(0, 0, 0, 0.25),
+
+                      transitionDuration: Duration(milliseconds: 200),
+                      transitionBuilder: (context, anim1, anim2, child) {
+                        return Transform.scale(
+                          scale: anim1.value,
+                          child: Opacity(
+                            opacity: anim1.value,
+                              child: Player()
+                          )
+                        );
+                      },
                     )
                 ),
               )
